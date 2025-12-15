@@ -25,10 +25,10 @@ class Buy(APIView):
     permission_classes = [IsBuyer]
 
     def post(self, request):
-        product_id = request.data.get('productId')
+        product_name = request.data.get('productName')
         amount = int(request.data.get('amount', 0))
 
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(productName=product_name)
 
         total_cost = product.cost * amount
 
