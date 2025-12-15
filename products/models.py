@@ -2,7 +2,7 @@ from django.db import models
 from users.models import User
 from django.core.exceptions import ValidationError 
 class Product(models.Model):
-    productName = models.CharField(max_length=255)
+    productName = models.CharField(max_length=255,unique=True)
     cost = models.PositiveIntegerField()
     amountAvailable = models.PositiveIntegerField()
     seller = models.ForeignKey(User,on_delete=models.CASCADE,related_name='products')

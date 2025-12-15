@@ -7,9 +7,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'role', 'deposit')
-        read_only_fields = ('id', 'role', 'deposit')
+        read_only_fields = ('id', 'deposit')
 
-
+    #make deposit hidden from the seller user
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -17,11 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
             data.pop('deposit', None)
 
         return data
+    #validate the role to make sure it won't updated after created the user 
+    def validate_role(self, value):
+        if self.instance is not None:
+            raise serializers.ValidationError("Role cannot be updated")
+        return value
+    
+    
 
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-            role=validated_data['role']
-        )
-        return user

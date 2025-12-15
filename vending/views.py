@@ -11,7 +11,7 @@ class Deposit(APIView):
     permission_classes = [IsBuyer]
 
     def post(self, request):
-        coin = request.data.get('coin')
+        coin =int( request.data.get('coin'))
 
         if coin not in VALID_COINS:
             return Response({"error": "Invalid coin"}, status=400)
@@ -28,8 +28,11 @@ class Buy(APIView):
         product_name = request.data.get('productName')
         amount = int(request.data.get('amount', 0))
 
-        product = Product.objects.get(productName=product_name)
-
+        try:
+            product = Product.objects.get(productName=product_name)
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=404)
+        
         total_cost = product.cost * amount
 
         if product.amountAvailable < amount:
