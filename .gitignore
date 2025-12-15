@@ -1,0 +1,22 @@
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.env
+.env*
+media/*
+venv/
+media
+*.csv
+*sqlite*
+db.sqlite3
+static/rest_framework
+static/admin
+logs/*
+*.mo
+Dockerfile
+docker-compose.yaml
+.vscode
