@@ -4,6 +4,10 @@ from rest_framework import status
 from vending.models import Transaction
 from vending.permissions import IsBuyer
 from products.models import Product
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+from vending.serializers import TransactionSerializer
 
 VALID_COINS = [5, 10, 20, 50, 100]
 
@@ -77,3 +81,23 @@ def calculate_change(change):
     for coin in sorted(VALID_COINS, reverse=True):
         coins[coin], change = divmod(change, coin)
     return coins
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def transactions_list(request):
+    user = request.user
+
+    if user.is_superuser:
+        transactions = Transaction.objects.all()
+
+    elif user.role == 'seller':
+        transactions = Transaction.objects.filter(seller=user)
+
+    else:
+        return Response(
+            {"error": "You are not allowed to view transactions"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)    
