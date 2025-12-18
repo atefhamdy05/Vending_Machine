@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from vending.models import Transaction
 from vending.permissions import IsBuyer
 from products.models import Product
 
@@ -48,6 +49,13 @@ class Buy(APIView):
         change = request.user.deposit
         request.user.deposit = 0
         request.user.save()
+        Transaction.objects.create(
+            product_name=product.productName,
+            seller=product.seller,
+            buyer=request.user,
+            amount=amount,
+            total_spent=total_cost
+        )
 
         return Response({
             "total_spent": total_cost,
